@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<title>Pixel Fight 2</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body oncontextmenu="return false;">
+
+<div id="info">Controls: WASD, Left Click To Throw Your Sword, Right Click To Repulse Bullets<br />
+Bullets Bounce Of Walls And Of Your Sword, You Die In 5 Hits</div>
+
+<div id="menu">
+    <div id="gameMenu">
+        PIXEL FIGHT 2<br />
+        <button id="play">PLAY</button>
+    </div>
+</div>
+
+<div id="topWall"></div>
+<div id="rightWall"></div>
+<div id="bottomWall"></div>
+<div id="leftWall"></div>
+
+<img src="portal.gif" alt="portal" id="portal1" />
+<img src="portal.gif" alt="portal" id="portal2" />
+<img src="portal.gif" alt="portal" id="portal3" />
+<img src="portal.gif" alt="portal" id="portal4" />
+
+<div id="highscore">HIGHSCORE: 0</div>
+<progress id="hp" value="100" min="0" max="100"></progress>
+<progress id="repulse" value="30" min="0" max="30"></progress>
+<div id="hpText">HEALTH</div>
+<div id="repulseText">REPULSE</div>
+
+<canvas id="canvas1"></canvas>
+<div id="sword"></div>
+
+<div id="youLose">YOU LOSE!<br />Enemies Destroyed: <span id="enemiesDestroyed">0</span><br /><button id="tryAgain">Try Again</button></div>
+<footer>A Game Made By Maksymilian Nowak &copy;2021<br />
+Menu Music Made By Abstraction - Ludum Dare 38 Track 2<br />
+Visit His Website! http://www.abstractionmusic.com/</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
