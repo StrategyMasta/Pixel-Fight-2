@@ -235,13 +235,15 @@ class Bullet{
         this._type = type;
         this._angle = angle;
         this._bulletSize = 8;
-        this._cooldown = 40;
+        this._cooldown = 50;
+        this._lifeTime = 350;
         this._hitSound = new Audio("hit.wav");
         this._hitSound.volume = 0.7;
     }
     update(){
         this._x -= Math.cos(this._angle) * speed * 1.5;
         this._y -= Math.sin(this._angle) * speed * 1.5;
+        this._lifeTime--;
         if((this._y <= topWall.bottom && Math.abs(this._x + this._bulletSize/2 - topWall.left) <= 4) ||
           (this._y <= topWall.bottom && Math.abs(this._x + this._bulletSize/2 - topWall.right) <= 4) ||
           (this._y + this._bulletSize >= bottomWall.top && Math.abs(this._x + this._bulletSize/2 - bottomWall.left) <= 4) ||
@@ -298,7 +300,7 @@ class Bullet{
             document.getElementById("hp").value = player._hp;
             this._hitSound.play();
             bullets.splice(bullets.indexOf(this), 1);
-        } else if(this._x > canvas.width || this._y > canvas.height || this._x < 0 || this._y < 0){
+        } else if(this._x > canvas.width || this._y > canvas.height || this._x < 0 || this._y < 0 || this._lifeTime <= 0){
             bullets.splice(bullets.indexOf(this), 1);
         } else{
             ctx.save();
@@ -309,7 +311,7 @@ class Bullet{
             if(this._type == "drone"){
                 if(this._cooldown == 0) {
                     bullets.push(new Bullet(this._x, this._y, Math.atan2(this._y + this._bulletSize/2 - player._y, this._x + this._bulletSize/2 - player._x), this._teamPlayer, "pistol", "blue"));
-                    this._cooldown = 40;
+                    this._cooldown = 50;
                 }
             }
             ctx.restore();
