@@ -27,6 +27,9 @@ let collision = false;
 let thrownSword = null;
 let repulse = 30;
 let swordAngle = 0;
+const items = [];
+const healthPotionImg = new Image();
+healthPotionImg.src = "health potion.png"
 const music = new Audio("Ludum Dare 38 - Track 2.wav");
 music.volume = 0.38;
 music.setAttribute("loop", "");
@@ -40,7 +43,8 @@ let enemiesKilled = 0;
 let enemies = [];
 const weps = {
     pistol: {damage: 50},
-    drone: {damage: 50}
+    drone: {damage: 50},
+    sniper: {damage: 50}
 };
 let bullets = [];
 let particles = [];
@@ -89,6 +93,7 @@ function tryAgain(){
     document.getElementById("repulse").value = 30;
     document.getElementById("hp").value = 100;
     enemiesInterval = setInterval(newEnemy, 1500);
+    itemsInterval = setInterval(newItem, 7000);
     animate();
 }
 function newEnemy(){
@@ -111,7 +116,7 @@ function newEnemy(){
             );
         }
     } else{
-        let randomNum = Math.floor(Math.random() * 3) + 1;
+        let randomNum = Math.floor(Math.random() * 4) + 1;
         if(randomNum == 1){
             enemies.push(
                 new BasicEnemy(Math.random() < 0.5 ? canvas.width * 0.075 - playerSize/2 : canvas.width - (canvas.width * 0.075 - playerSize/2),
@@ -122,13 +127,24 @@ function newEnemy(){
                 new ShotgunEnemy(Math.random() < 0.5 ? canvas.width * 0.075 - playerSize/2 : canvas.width - (canvas.width * 0.075 - playerSize/2),
                                  Math.random() < 0.5 ? canvas.height * 0.075 - playerSize/2 : canvas.height - (canvas.height * 0.075 - playerSize/2))
             );
-        } else{
+        } else if(randomNum == 3){
             enemies.push(
                 new DroneEnemy(Math.random() < 0.5 ? canvas.width * 0.075 - playerSize/2 : canvas.width - (canvas.width * 0.075 - playerSize/2),
                                  Math.random() < 0.5 ? canvas.height * 0.075 - playerSize/2 : canvas.height - (canvas.height * 0.075 - playerSize/2))
             );
+        } else{
+            enemies.push(
+                new SniperEnemy(Math.random() < 0.5 ? canvas.width * 0.075 - playerSize/2 : canvas.width - (canvas.width * 0.075 - playerSize/2),
+                                 Math.random() < 0.5 ? canvas.height * 0.075 - playerSize/2 : canvas.height - (canvas.height * 0.075 - playerSize/2))
+            );
         }
     }
+}
+function newItem(){
+    const x = Math.random() * (innerWidth * 0.7 - 32) + innerWidth * 0.15 + 16;
+    const y = Math.random() * (innerHeight * 0.7 - 32) + innerHeight * 0.15 + 16;
+    ctx.drawImage(healthPotionImg, x - 16, y - 16);
+    items.push({img: healthPotionImg, type: "healthPotion", x, y});
 }
 function* throwSword(){
     let hit = false;
@@ -244,6 +260,7 @@ class Bullet{
         this._x -= Math.cos(this._angle) * speed * 1.5;
         this._y -= Math.sin(this._angle) * speed * 1.5;
         this._lifeTime--;
+        if(this._type != "sniper"){
         if((this._y <= topWall.bottom && Math.abs(this._x + this._bulletSize/2 - topWall.left) <= 4) ||
           (this._y <= topWall.bottom && Math.abs(this._x + this._bulletSize/2 - topWall.right) <= 4) ||
           (this._y + this._bulletSize >= bottomWall.top && Math.abs(this._x + this._bulletSize/2 - bottomWall.left) <= 4) ||
@@ -259,6 +276,7 @@ class Bullet{
           (this._x + this._bulletSize >= topWall.left && this._x <= topWall.right && Math.abs(this._y + this._bulletSize/2 - topWall.bottom) <= 4) ||
           (this._x + this._bulletSize >= bottomWall.left && this._x <= bottomWall.right && Math.abs(this._y + this._bulletSize/2 - bottomWall.top) <= 4)){
             this._angle *= -1;
+        }
         }
         /*if(Math.abs(this._x - swordRect.left) < this._bulletSize ||
           Math.abs(this._x + this._bulletSize - swordRect.right) < this._bulletSize ||
@@ -408,6 +426,17 @@ class DroneEnemy extends Enemy{
         bullets.push(new Bullet(this._x + 3.5, this._y + 3.5, Math.atan2(this._y + playerSize/2 - player._y, this._x + playerSize/2 - player._x), false, "drone", this._color));
     }
 }
+class SniperEnemy extends Enemy{
+    constructor(x, y){
+        super(x, y);
+        this._color = "darkgreen";
+    }
+    shoot(){
+        this._shootSound.currentTime = 0;
+        this._shootSound.play();
+        bullets.push(new Bullet(this._x + 3.5, this._y + 3.5, Math.atan2(this._y + playerSize/2 - player._y, this._x + playerSize/2 - player._x), false, "sniper", this._color));
+    }
+}
 class Explosion{
     constructor(x, y, color){
         this._x = x;
@@ -473,9 +502,23 @@ function animate(){
             }
         }
     }
+    for(var i = 0; i < items.length; i++){
+        ctx.drawImage(items[i].img, items[i].x - 16, items[i].y - 16);
+        if(player._x + playerSize >= items[i].x - 16 && player._x <= items[i].x + 16 && player._y + playerSize >= items[i].y - 16 && player._y <= items[i].y + 16){
+            if(items[i].type == "healthPotion"){
+                player._hp += player._hp + 20 > 100 ? 0 : 20;
+                document.getElementById("hp").value = player._hp;
+            }
+            items.splice(i, 1);
+        }
+    }
     for(var i = 0; i < bullets.length; i++){
         bullets[i].update();
         bullets[i].draw();
+        if(bullets[i] != undefined && bullets[i]._type == "sniper"){
+            bullets[i].update();
+            bullets[i].draw();
+        }
     }
     for(var i = 0; i < enemies.length; i++){
         enemies[i].update();
@@ -491,11 +534,13 @@ function animate(){
         document.getElementById("youLose").style.visibility = "visible";
         if(enemiesKilled > localStorage.getItem("highscore") * 1) localStorage.setItem("highscore", enemiesKilled);
         clearInterval(enemiesInterval);
+        clearInterval(itemsInterval);
     } else requestAnimationFrame(animate);
 }
 document.getElementById("play").addEventListener("click", function(){
     animate();
     enemiesInterval = setInterval(newEnemy, 1500);
+    itemsInterval = setInterval(newItem, 7000);
     document.getElementById("highscore").innerHTML = "HIGHSCORE: " + localStorage.getItem("highscore") * 1;
     menu.style.visibility = 'hidden';
     document.querySelector("footer").style.visibility = 'hidden';
