@@ -27,7 +27,7 @@ let collision = false;
 let thrownSword = null;
 let repulse = 30;
 let swordAngle = 0;
-const items = [];
+let items = [];
 const healthPotionImg = new Image();
 healthPotionImg.src = "health potion.png"
 const music = new Audio("Ludum Dare 38 - Track 2.wav");
@@ -86,6 +86,7 @@ function tryAgain(){
     bullets = [];
     particles = [];
     enemies = [];
+    items = [];
     enemiesKilled = 0;
     player._hp = 100;
     player._x = innerWidth/2 - playerSize/2;

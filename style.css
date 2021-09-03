@@ -117,7 +117,6 @@ canvas{
     font-weight: 400;
     color: white;
     text-align: center;
-    background-color: red;
     border: 2px solid black;
     z-index: 2;
 }
@@ -129,7 +128,6 @@ canvas{
 }
 #repulse, #repulseText{
     left: 52%;
-    background-color: blue;
 }
 #repulse::-webkit-progress-value{
     background-color: blue;
