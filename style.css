@@ -14,7 +14,9 @@
     pointer-events: none;
 }
 canvas{
+    position: absolute;
     cursor: url(cursor.png) 16 16, pointer;
+    z-index: 2;
 }
 #topWall{
     position: absolute;
@@ -22,7 +24,7 @@ canvas{
     left: 25%;
     width: 50vw;
     height: 15vh;
-    background-color: gray;
+    background-image: linear-gradient(to bottom, lightgray, #444);
     pointer-events: none;
     z-index: 2;
 }
@@ -32,7 +34,7 @@ canvas{
     right: 0;
     width: 15vw;
     height: 50vh;
-    background-color: gray;
+    background-image: linear-gradient(to left, lightgray, #444);
     pointer-events: none;
     z-index: 2;
 }
@@ -42,7 +44,7 @@ canvas{
     left: 25%;
     width: 50vw;
     height: 15vh;
-    background-color: gray;
+    background-image: linear-gradient(to top, lightgray, #444);
     pointer-events: none;
     z-index: 2;
 }
@@ -52,7 +54,7 @@ canvas{
     left: 0;
     width: 15vw;
     height: 50vh;
-    background-color: gray;
+    background-image: linear-gradient(to right, lightgray, #444);
     pointer-events: none;
     z-index: 2;
 }
@@ -104,6 +106,7 @@ canvas{
     font-weight: 400;
     pointer-events: none;
     user-select: none;
+    text-shadow: 5px 5px 4px black;
     z-index: 2;
 }
 #hp, #repulse, #hpText, #repulseText{
@@ -157,7 +160,6 @@ canvas{
     display: flex;
     align-items: center;
     justify-content: center;
-    background: black;
     z-index: 3;
 }
 #gameMenu{

@@ -28,6 +28,7 @@ let thrownSword = null;
 let repulse = 30;
 let swordAngle = 0;
 let items = [];
+let start = false;
 const healthPotionImg = new Image();
 healthPotionImg.src = "health potion.png"
 const music = new Audio("Ludum Dare 38 - Track 2.wav");
@@ -480,6 +481,7 @@ function animate(){
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     player.update();
     player.draw();
+    if(Math.random() > .7) particles.push(new Explosion(Math.random() * canvas.width, Math.random() * canvas.height, "hsl("+Math.random() * 360+", 44%, 66%)"));
     if(thrownSword != null){
         let nextValue = thrownSword.next();
         if(nextValue.done == true){
@@ -532,13 +534,30 @@ function animate(){
     if(player._hp <= 0){
         canvas.style.pointerEvents = "none";
         document.getElementById("enemiesDestroyed").innerHTML = enemiesKilled;
+        if(enemiesKilled > localStorage.getItem("highscore") * 1){
+            localStorage.setItem("highscore", enemiesKilled);
+            document.getElementById("score").innerHTML = "New Highscore!";
+        } else document.getElementById("score").innerHTML = "You Lose!";
         document.getElementById("youLose").style.visibility = "visible";
-        if(enemiesKilled > localStorage.getItem("highscore") * 1) localStorage.setItem("highscore", enemiesKilled);
         clearInterval(enemiesInterval);
         clearInterval(itemsInterval);
     } else requestAnimationFrame(animate);
 }
+function menuAnimate(){
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if(Math.random() > .7) particles.push(new Explosion(Math.random() * canvas.width, Math.random() * canvas.height, "hsl("+Math.random() * 360+", 44%, 66%)"));
+    for(var i = 0; i < particles.length; i++){
+        particles[i].update();
+        particles[i].draw();
+    }
+    if(!start) requestAnimationFrame(menuAnimate);
+}
+menuAnimate();
 document.getElementById("play").addEventListener("click", function(){
+    start = true;
+    canvas.style.zIndex = "0";
+    canvas.style.position = "static";
     animate();
     enemiesInterval = setInterval(newEnemy, 1500);
     itemsInterval = setInterval(newItem, 7000);
