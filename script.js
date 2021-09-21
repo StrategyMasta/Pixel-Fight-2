@@ -5,6 +5,21 @@ canvas.height = innerHeight;
 ctx.fillStyle = "black";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+const btn = document.getElementById("play");
+const btnCtx = btn.getContext("2d");
+let btnHover = false;
+
+btn.width = innerWidth/2;
+btn.height = innerHeight * .16;
+
+btnCtx.fillStyle = "black";
+btnCtx.fillRect(0, 0, btn.width, btn.height);
+window.onload = function(){
+    btnCtx.font = "60px fibberish";
+    btnCtx.fillStyle = "white";
+    btnCtx.fillText("Play", btn.width/2 - 60, btn.height/2 + 15);
+};
+
 const mouse = {
     _x: null,
     _y: null
@@ -79,7 +94,7 @@ function tryAgain(){
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     document.getElementById("youLose").style.visibility = "hidden";
     canvas.style.pointerEvents = "auto";
-    document.getElementById("highscore").innerHTML = "HIGHSCORE: " + localStorage.getItem("highscore") * 1;
+    document.getElementById("highscore").innerHTML = "Highscore: " + localStorage.getItem("highscore") * 1;
     a = false;
     w = false;
     s = false;
@@ -345,7 +360,8 @@ class Enemy extends Player{
         this._target = player;
         this._shootCooldown = 80;
         this._damage = 20;
-        this._dieSound = new Audio("die.wav");;
+        this._dieSound = new Audio("die.wav");
+        this._dieSound.volume = 0.6;
     }
     update(){
         let _randomNum = Math.random() - .5;
@@ -372,8 +388,6 @@ class Enemy extends Player{
                 swordY = centerY - Math.sin(swordAngle) * 25 + Math.sin(swordAngle) * 5 * i;
             }
             if(Math.abs(this._x + playerSize/2 - swordX) <= 3.2 + playerSize/2 && Math.abs(swordY - (this._y + playerSize/2)) <= 3.2 + playerSize/2){
-                let _hitSound = new Audio("hit.wav");
-                _hitSound.play();
                 this._hp -= player._thrown ? 100 : 50;
                 if(player._thrown) collision = true;
                 break;
@@ -468,8 +482,19 @@ class Explosion{
 window.addEventListener("resize", _ => {
     canvas.width = innerWidth;
     canvas.height = innerHeight;
+    
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    btn.width = innerWidth/2;
+    btn.height = innerHeight * .16;
+    
+    btnCtx.fillStyle = "black";
+    btnCtx.fillRect(0, 0, btn.width, btn.height);
+    btnCtx.font = "60px fibberish";
+    btnCtx.fillStyle = "white";
+    btnCtx.fillText("Play", btn.width/2 - 60, btn.height/2 + 15);
+    
     topWall = document.getElementById("topWall").getBoundingClientRect();
     rightWall = document.getElementById("rightWall").getBoundingClientRect();
     bottomWall = document.getElementById("bottomWall").getBoundingClientRect();
@@ -554,6 +579,16 @@ function menuAnimate(){
     if(!start) requestAnimationFrame(menuAnimate);
 }
 menuAnimate();
+function btnAnimate(){
+    btnCtx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    btnCtx.fillRect(0, 0, btn.width, btn.height);
+    btnCtx.font = "60px fibberish";
+    btnCtx.fillStyle = "white";
+    btnCtx.fillText("Play", btn.width/2 - 60, btn.height/2 + 15);
+    btnCtx.fillStyle = "hsl("+Math.random() * 360+", 44%, 66%)";
+    btnCtx.fillRect(0, Math.random() * (btn.height - 2), btn.width, 2);
+    if(btnHover) requestAnimationFrame(btnAnimate);
+}
 document.getElementById("play").addEventListener("click", function(){
     start = true;
     canvas.style.zIndex = "0";
@@ -561,7 +596,7 @@ document.getElementById("play").addEventListener("click", function(){
     animate();
     enemiesInterval = setInterval(newEnemy, 1500);
     itemsInterval = setInterval(newItem, 7000);
-    document.getElementById("highscore").innerHTML = "HIGHSCORE: " + localStorage.getItem("highscore") * 1;
+    document.getElementById("highscore").innerHTML = "Highscore: " + localStorage.getItem("highscore") * 1;
     menu.style.visibility = 'hidden';
     document.querySelector("footer").style.visibility = 'hidden';
     document.getElementById("info").style.visibility = 'hidden';
@@ -584,4 +619,6 @@ document.getElementById("play").addEventListener("click", function(){
         return false;
     });
 });
+btn.setAttribute("onmouseover", "if(!btnHover){btnHover = true; btnAnimate();}");
+btn.setAttribute("onmouseout", "btnHover = false;");
 document.getElementById("tryAgain").addEventListener("click", tryAgain);

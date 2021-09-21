@@ -13,10 +13,18 @@
     background-image: linear-gradient(to left, lightgreen, green);
     pointer-events: none;
 }
-canvas{
+#canvas1{
     position: absolute;
     cursor: url(cursor.png) 16 16, pointer;
     z-index: 2;
+}
+@font-face {
+    font-family: fibberish;
+    src: url(fibberish.ttf);
+}
+#num{
+    color: red;
+    font-size: 2em;
 }
 #topWall{
     position: absolute;
@@ -107,6 +115,7 @@ canvas{
     pointer-events: none;
     user-select: none;
     text-shadow: 5px 5px 4px black;
+    font-family: fibberish;
     z-index: 2;
 }
 #hp, #repulse, #hpText, #repulseText{
@@ -141,6 +150,7 @@ canvas{
 #hpText, #repulseText{
     background-color: transparent;
     user-select: none;
+    font-family: fibberish;
 }
 #info{
     position: absolute;
@@ -170,14 +180,23 @@ canvas{
     height: 40%;
     font-size: 60px;
     color: white;
-    background-image: linear-gradient(lightblue, blue, lightblue);
+    opacity: 0.8;
+    background-color: cyan;
+    animation-name: menuColor;
+    animation-iteration-count: infinite;
+    animation-duration: 8s;
+    animation-direction: alternate-reverse;
+    font-family: fibberish;
     text-align: center;
     z-index: 2;
 }
+@keyframes menuColor{
+    from{background-color: cyan;}
+    to{background-color: crimson;}
+}
 #play{
-    width: 40%;
-    height: 50%;
     cursor: pointer;
+    border: 1px solid white;
 }
 #youLose{
     position: absolute;
